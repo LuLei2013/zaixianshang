@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"log"
+	"runtime"
 )
 
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
@@ -19,11 +20,13 @@ func sayhelloName(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("val:", strings.Join(v, ""))
 		fmt.Fprintf(w, ":")
 		fmt.Fprintf(w, strings.Join(v, ""))
+		fmt.Fprintf(w, "\n")
 	}
 	//fmt.Fprintf(w, "Hello World!") //这个写入到w的是输出到客户端的
 }
 
 func main() {
+	runtime.GOMAXPROCS(2)
 	http.HandleFunc("/", sayhelloName) //设置访问的路由
 	err := http.ListenAndServe(":9090", nil) //设置监听的端口
 	if err != nil {

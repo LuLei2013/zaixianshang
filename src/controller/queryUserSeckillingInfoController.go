@@ -7,6 +7,7 @@ import (
     	"vo"
     	"encoding/json"
 	"github.com/garyburd/redigo/redis"
+	"strconv"
 )
 
 func QueryUserSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
@@ -24,15 +25,22 @@ func QueryUserSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(resp, "error")
 		return 
 	}
-	IPAndPort := "192.168.2.165:6379"
+	IPAndPort := vo.Ip + ":" + vo.Port
 	conn, _ := redis.Dial("tcp", IPAndPort)
 	if conn == nil {
 		fmt.Printf("redis连接失败\n")
 		return
 	}
 	defer conn.Close()
-	goodsid, _ :=	redis.String(conn.Do("GET", userid))
 	retMessage := &vo.ResultPersonMsg{0, "", ""}
+	value, _ := redis.String(conn.Do("GET", vo.Product1_Query_Name))
+	if count, _ := strconv.Atoi(string(value)); count < vo.Product1_Max_Num {
+		retMessage.SetErrno(2)
+		retMessage.SetStatus("3")
+		retMessage.SetGoodsId("还在秒杀中，请稍后查询")
+		return
+	}
+	goodsid, _ :=	redis.String(conn.Do("GET", userid))
 	if goodsid != ""{   // 秒杀成功
 		retMessage.SetErrno(0)
 		retMessage.SetStatus("1")

@@ -29,14 +29,14 @@ func QueryProductSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(resp, "error")
 		return
 	}
-	IPAndPort := "192.168.2.165:6379"
+	IPAndPort := vo.Ip + ":" + vo.Port
 	conn, _ := redis.Dial("tcp", IPAndPort)
 	if conn == nil {
 		fmt.Printf("redis连接失败\n")
 		return
 	}
 	defer conn.Close()
-	productInfo, _ := redis.Strings(conn.Do("LRANGE", "sumProduct1", 0, -1))
+	productInfo, _ := redis.Strings(conn.Do("LRANGE", vo.Product1_Query_String, 0, -1))
 	returnMsg := &vo.ResultProductMsg{0, nil}
 	if productInfo == nil {
 		returnMsg.SetErrno(1)

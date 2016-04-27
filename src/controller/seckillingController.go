@@ -18,6 +18,7 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 	//fmt.Println(r.Form["url_long"])
 	counter += 1
 	fmt.Println(counter)
+	//fmt.Println(vo.Ip)
 	for k, v := range req.Form {
 		fmt.Println("key:", k)
 		fmt.Fprintf(resp, k)
@@ -29,23 +30,19 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 	message := &vo.ReturnMsg{0, ""}
 	//test dw
 
-	IPAndPort := "192.168.2.165:6379"
+	IPAndPort := vo.Ip + ":" + vo.Port
 	conn, _ := redis.Dial("tcp", IPAndPort)
 	if conn == nil {
 		fmt.Printf("redis连接失败\n")
 	}
 	defer conn.Close()
-	//GoRedisService.OpenRedis("192.168.2.165","6379")
-	//defer GoRedisService.CloseRedis();
-	value, _ := redis.String(conn.Do("GET", "Product1"))
-	if count, _ := strconv.Atoi(string(value)); count >= 100 {
+	value, _ := redis.String(conn.Do("GET", vo.Product1_Query_Name))
+	if count, _ := strconv.Atoi(string(value)); count >= vo.Product1_Max_Num {
 		message.SetErrno(1)
 		message.SetErrMsg("秒杀失败")
 		if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {
 			fmt.Fprintf(resp, string(jsonstr))
 		}
-		//fmt.Fprintf(resp, "失败")
-		//return message
 	} else {
 		entry := &vo.QueueEntry{"", "", ""}
 		for key, value := range req.Form {

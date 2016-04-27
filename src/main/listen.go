@@ -11,16 +11,15 @@ import (
 func main() {
 	defer GoRedisService.CloseRedis()
 	fmt.Println("listen the world!")
-	GoRedisService.OpenRedis("localhost", "6379")
-
+	vo.Init()
+	GoRedisService.OpenRedis(vo.Ip, vo.Port)
 	for {
 		//超过商品总数,停止监听
 		//todo 添加配置文件,尝试多商品
-		if count, _ := strconv.Atoi(GoRedisService.HGetValue("Product1")); count >= 100 {
+		if count,_ := strconv.Atoi(GoRedisService.HGetValue(vo.Product1_Query_Name)); count>= vo.Product1_Max_Num {
 			fmt.Println("listen finish!")
 			break
 		}
-
 		popValue := GoRedisService.RPopValue("list")
 		if popValue != "" {
 			fmt.Print("popValue:" + popValue)
@@ -33,9 +32,8 @@ func main() {
 			} else {
 				continue
 			}
-
 			if checkValid(userId) {
-				incCount("Product1", userId) //写入redis
+				incCount(vo.Product1_Query_Name,userId)//写入redis
 			}
 			//fmt.Print(popValue + "\n")
 		}
@@ -71,5 +69,5 @@ func incCount(productId string, userId string) {
 	newValue := userId + "*" + strconv.Itoa(goodsid)
 	fmt.Print(newValue)
 	fmt.Print("\n")
-	GoRedisService.LPushValue("sum"+productId, newValue)
+	GoRedisService.LPushValue(vo.Product1_Query_String,newValue)
 }

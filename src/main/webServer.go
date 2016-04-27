@@ -5,9 +5,11 @@ import (
 	"log"
 	"runtime"
 	"controller"
+	"vo"
 )
 
 func main() {
+	vo.Init()
 	runtime.GOMAXPROCS(2)
 	http.HandleFunc("/zaixianshang/queryUserSeckillingInfo", controller.QueryUserSeckillingInfo) //设置访问的路由
 	http.HandleFunc("/zaixianshang/seckilling", controller.Seckilling) //设置访问的路由
@@ -17,3 +19,4 @@ func main() {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
+

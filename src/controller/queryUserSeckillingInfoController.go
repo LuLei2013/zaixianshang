@@ -1,12 +1,13 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"redis"
 	"strings"
-	"vo"
+    	"vo"
+    	"encoding/json"
+	"strconv"
 )
 
 func QueryUserSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
@@ -24,9 +25,16 @@ func QueryUserSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(resp, "error")
 		return
 	}
-	goodsid, _ := redis.RedisPoolOne.Get(userid)
 	retMessage := &vo.ResultPersonMsg{0, "", ""}
-	if goodsid != "" { // 秒杀成功
+	value, _ := redis.RedisPoolOne.Get(vo.Product1_Query_Name)
+	if count, _ := strconv.Atoi(string(value)); count < vo.Product1_Max_Num {
+		retMessage.SetErrno(2)
+		retMessage.SetStatus("3")
+		retMessage.SetGoodsId("还在秒杀中，请稍后查询")
+		return
+	}
+	goodsid, _ := redis.RedisPoolOne.Get(userid)
+	if goodsid != ""{   // 秒杀成功
 		retMessage.SetErrno(0)
 		retMessage.SetStatus("1")
 		retMessage.SetGoodsId(goodsid)

@@ -1,36 +1,36 @@
 package main
 import (
 	"fmt"
-	"GoRedisService"
+	"redis"
 	"strconv"
 )
 
 func main () {
-	defer GoRedisService.CloseRedis();
+
 	fmt.Println("listen the world!")
-	GoRedisService.OpenRedis("localhost","6379")
+
 
 
 	for  {
 
-		if GoRedisService.HGetValue("Product1") == "100" {
+		if RedisPoolOne.Get("Product1") == "100" {
 			break
 		}
 
-		popValue := GoRedisService.RPopValue("list")
+		popValue := RedisPoolOne.LPop("list111")
 		if popValue != "" {
 			fmt.Print("popValue:"+popValue)
 			//fmt.Print("\n")
-			if GoRedisService.HGetValue("Product1") == "" {
-				GoRedisService.HSetValue("Product1","1")
+			if RedisPoolOne.Get("Product1") == "" {
+				RedisPoolOne.Set("Product1","1")
 				//fmt.Print("if here")
 			}else {
 				//fmt.Print("else here")
-				tmp :=GoRedisService.HGetValue("Product1")
+				tmp :=RedisPoolOne.Get("Product1")
 				fmt.Print("  "+tmp)
 				fmt.Print("\n")
 				b,_ := strconv.Atoi(tmp);
-				GoRedisService.HSetValue("Product1",strconv.Itoa(b+1))
+				RedisPoolOne.Set("Product1",strconv.Itoa(b+1))
 			}
 			//fmt.Print(popValue + "\n")
 		}

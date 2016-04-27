@@ -16,7 +16,7 @@ func main() {
 	//redis list数据输入输出
 	redisone.RPush("1243", "1")
 	redisone.RPush("1243", "2")
-	fmt.Println(redisone.RPop("1243"))
+	fmt.Println(redisone.LPop("1243"))
 
 	//fmt.Println(redisone.HGetall("123"))
 

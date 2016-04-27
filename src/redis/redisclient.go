@@ -3,9 +3,13 @@ package redis
 import (
 	"errors"
 	"github.com/garyburd/redigo/redis"
-	"strconv"
+
 )
 
+var RedisPoolOne *RedisClient
+func init() {
+	RedisPoolOne = GetRedisInstance()
+}
 type RedisClient struct {
 	// for pool
 	pool         *redis.Pool
@@ -21,6 +25,41 @@ type RedisClient struct {
 	expiresecond int
 }
 
+func GetRedisInstance() *RedisClient {
+	redissvr := "localhost:6379"
+
+	conntimeout := 100
+	readtimeout := 50
+	writetimeout := 50
+	maxidle := 100
+	maxactive := 1000
+	expiresecond := 7000
+	return newRedisClient(redissvr, conntimeout, readtimeout, writetimeout, maxidle, maxactive, expiresecond)
+}
+
+func newRedisClient(redissvr string, conntimeout, readtimeout, writetimeout, maxidle, maxactive, expiresecond int) *RedisClient {
+
+	rc := new(RedisClient)
+	if rc == nil {
+		return nil
+	}
+
+	rc.pool = GetRedisPool(redissvr, conntimeout, readtimeout, writetimeout, maxidle, maxactive)
+	if rc.pool == nil {
+		return nil
+	}
+
+	rc.redissvr = redissvr
+
+	rc.conntimeout = conntimeout
+	rc.readtimeout = readtimeout
+	rc.writetimeout = writetimeout
+	rc.maxidle = maxidle
+	rc.maxactive = maxactive
+	rc.expiresecond = expiresecond
+
+	return rc
+}
 func (rc *RedisClient) Exists(key string) (bool, error) {
 	c := rc.pool.Get()
 	defer c.Close()
@@ -61,25 +100,6 @@ func (rc *RedisClient) Get(key string) (string, error) {
 	return reply, nil
 }
 
-func (rc *RedisClient) Setnx(key, value string) error {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	reply, err := redis.Int((c.Do("SETNX", key, value)))
-	if err != nil {
-		return err
-	}
-
-	// add redis key expire time.
-	// ignore if error of expire command.
-	rc.Expire(key, rc.expiresecond)
-
-	if reply == 1 {
-		return nil
-	} else {
-		return errors.New("redisclient: setnx fail of key exist")
-	}
-}
 
 func (rc *RedisClient) Expire(key string, expiresecond int) error {
 	c := rc.pool.Get()
@@ -114,73 +134,7 @@ func (rc *RedisClient) Del(key string) error {
 	return nil
 }
 
-func (rc *RedisClient) ZRange(key string, start, stop int) ([]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
 
-	reply, err := redis.Strings(c.Do("ZRANGE", key, start, stop))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
-}
-
-func (rc *RedisClient) ZRangeWithScores(key string, start, stop int) (map[string]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	reply, err := redis.StringMap(c.Do("ZRANGE", key, start, stop, "WITHSCORES"))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
-}
-
-func (rc *RedisClient) ZRangeByScore(key string, min, max int, minopen, maxopen bool) ([]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	minstr := strconv.FormatInt(int64(min), 10)
-	maxstr := strconv.FormatInt(int64(max), 10)
-	if minopen {
-		minstr = "(" + strconv.FormatInt(int64(min), 10)
-	}
-
-	if maxopen {
-		maxstr = "(" + strconv.FormatInt(int64(max), 10)
-	}
-
-	reply, err := redis.Strings(c.Do("ZRANGEBYSCORE", key, minstr, maxstr))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
-}
-
-func (rc *RedisClient) ZRangeByScoreWithScores(key string, min, max int, minopen, maxopen bool) (map[string]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	minstr := strconv.FormatInt(int64(min), 10)
-	maxstr := strconv.FormatInt(int64(max), 10)
-	if minopen {
-		minstr = "(" + strconv.FormatInt(int64(min), 10)
-	}
-
-	if maxopen {
-		maxstr = "(" + strconv.FormatInt(int64(max), 10)
-	}
-
-	reply, err := redis.StringMap(c.Do("ZRANGEBYSCORE", key, minstr, maxstr, "WITHSCORES"))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
-}
 
 func (rc *RedisClient) HGetall(key string) (map[string]string, error) {
 	c := rc.pool.Get()
@@ -204,6 +158,16 @@ func (rc *RedisClient) HGet(key, subkey string) (string, error) {
 	}
 
 	return reply, nil
+}
+
+func (rc *RedisClient) HExists(key, subkey string) (bool, error) {
+	c := rc.pool.Get()
+	defer c.Close()
+	value,err := rc.HGet(key,subkey)
+	if err != nil && value != ""{
+		return true, err// handle error return from c.Do or type conversion error.
+	}
+	return false, err
 }
 
 func (rc *RedisClient) HSet(key, subkey, value string) error {
@@ -260,7 +224,7 @@ func (rc *RedisClient) RPush(key, value string) error {
 	return nil
 }
 
-func (rc *RedisClient) RPop(key string) (string, error) {
+func (rc *RedisClient) LPop(key string) (string, error) {
 	c := rc.pool.Get()
 	defer c.Close()
 

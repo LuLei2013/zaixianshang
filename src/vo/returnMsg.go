@@ -17,6 +17,6 @@ func (msg *ReturnMsg) SetErrMsg (errMsg string) {
 	msg.ErrMsg = errMsg
 }
 
-func (msg *ReturnMsg) GetErrMsg (no int) (res int) {
+func (msg *ReturnMsg) GetErrMsg (no int) (res string) {
 	return msg.ErrMsg
 }

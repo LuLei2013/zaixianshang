@@ -29,7 +29,10 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 	if count, _ := strconv.Atoi(GoRedisService.HGetValue("Product1")); count >= 100 {
 		message.SetErrno(1)
 		message.SetErrMsg("秒杀失败")
-		fmt.Fprintf(resp, "失败")
+		if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {
+			fmt.Fprintf(resp, string(jsonstr))
+		}
+		//fmt.Fprintf(resp, "失败")
 		//return message
 	} else {
 		entry := &vo.QueueEntry{"1", "2", "3"}
@@ -37,11 +40,15 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 			GoRedisService.LPushValue("list", string(str))
 			message.SetErrno(0)
 			message.SetErrMsg("秒杀中")
-			fmt.Fprintf(resp, "秒杀中")
+			if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {
+				fmt.Fprintf(resp, string(jsonstr))
+			}
 		} else {
 			message.SetErrno(1)
 			message.SetErrMsg("参数出错")
-			fmt.Fprintf(resp, "出错了！")
+			if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {
+				fmt.Fprintf(resp, string(jsonstr))
+			}
 		}
 		//return message
 	}

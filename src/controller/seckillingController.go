@@ -64,6 +64,7 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 			_, err := conn.Do("lpush", "list", string(str))
 			if err != nil {
 				fmt.Println("errMsg:", err)
+				return
 			}
 			//GoRedisService.LPushValue("list", string(str))
 			message.SetErrno(0)

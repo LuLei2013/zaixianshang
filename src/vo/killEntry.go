@@ -2,7 +2,7 @@ package vo
 
 type KillEntry struct {
 	Userid string	`json:"userid"`
-	Productid string	`json:"userid"`
+	Productid string	`json:"productid"`
 }
 
 func (entry *KillEntry) SetUserid (userid string){

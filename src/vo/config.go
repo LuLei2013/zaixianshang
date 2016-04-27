@@ -18,7 +18,7 @@ func Init() {
 	myConfig := new(util.Config)
 	path,_ := os.Getwd()
 	//fmt.Println(path)
-	path += "\\conf\\properties"
+	path += "/conf/properties"
 	//fmt.Println(path)
 	myConfig.InitConfig(path)
 	//fmt.Println(myConfig.Read("common", "ip"))

@@ -52,7 +52,6 @@ func QueryProductSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 		}
 		returnMsg.SetErrno(0)
 		returnMsg.SetList(goodsList)
-		fmt.Println(returnMsg.GetList())
 	}
 	if jsonstr, jsonerr := json.Marshal(returnMsg); jsonerr == nil {
 		fmt.Fprintf(resp, string(jsonstr))

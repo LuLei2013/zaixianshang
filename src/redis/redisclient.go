@@ -7,7 +7,6 @@ import (
 )
 
 type RedisClient struct {
-
 	// for pool
 	pool         *redis.Pool
 	redissvr     string
@@ -22,39 +21,14 @@ type RedisClient struct {
 	expiresecond int
 }
 
-func NewRedisClient(redissvr string, conntimeout, readtimeout, writetimeout, maxidle, maxactive, expiresecond int) *RedisClient {
-
-	rc := new(RedisClient)
-	if rc == nil {
-		return nil
-	}
-
-
-
-	rc.pool = GetRedisPool(redissvr, conntimeout, readtimeout, writetimeout, maxidle, maxactive)
-	if rc.pool == nil {
-		return nil
-	}
-
-	rc.redissvr = redissvr
-
-	rc.conntimeout = conntimeout
-	rc.readtimeout = readtimeout
-	rc.writetimeout = writetimeout
-	rc.maxidle = maxidle
-	rc.maxactive = maxactive
-	rc.expiresecond = expiresecond
-
-	return rc
-}
-func (rc *RedisClient) Exists(key string)(bool,error) {
+func (rc *RedisClient) Exists(key string) (bool, error) {
 	c := rc.pool.Get()
 	defer c.Close()
 	exists, err := redis.Bool((c.Do("EXISTS", key)))
 	if err != nil {
-		return false,err// handle error return from c.Do or type conversion error.
+		return false, err// handle error return from c.Do or type conversion error.
 	}
-	return exists,err
+	return exists, err
 }
 func (rc *RedisClient) Set(key, value string) error {
 	c := rc.pool.Get()

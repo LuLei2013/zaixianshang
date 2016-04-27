@@ -232,3 +232,41 @@ func (rc *RedisClient) HSet(key, subkey, value string) error {
 
 	return nil
 }
+
+func (rc *RedisClient) RPush(key, value string) error {
+	c := rc.pool.Get()
+	defer c.Close()
+
+	_, err := redis.Int(c.Do("rpush", key, value))
+	if err != nil {
+		return err
+	}
+
+	// add redis key expire time.
+	// ignore if error of expire command.
+	rc.Expire(key, rc.expiresecond)
+
+	// no need to check reply of HSET
+	// reply == 1 means HSET key subkey value, subkey not exist
+	// reply == 0 means HSET key subkey value, subkey exists, but the value is already modified.
+	/*
+		if reply == 1 {
+			return nil
+		} else {
+			return errors.New("redisclient: unexpected reply of hset")
+		}
+	*/
+
+	return nil
+}
+
+func (rc *RedisClient) RPop(key string) (string, error) {
+	c := rc.pool.Get()
+	defer c.Close()
+
+	reply, err := redis.String(c.Do("LPop", key))
+	if err != nil {
+		return "", err
+	}
+	return reply, nil
+}

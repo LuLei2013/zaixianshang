@@ -1,17 +1,19 @@
 package controller
+
 import (
-	"net/http"
-	"fmt"
-	"strconv"
-	"vo"
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"redis"
+	"strconv"
 	"strings"
-	"github.com/garyburd/redigo/redis"
+	"vo"
 )
 
 var counter = 0
-func Seckilling(resp http.ResponseWriter, req *http.Request){
-	req.ParseForm()  //解析参数，默认是不会解析的
+
+func Seckilling(resp http.ResponseWriter, req *http.Request) {
+	req.ParseForm() //解析参数，默认是不会解析的
 	//fmt.Println(r.Form)  //这些信息是输出到服务器端的打印信息
 	//fmt.Println("path", r.URL.Path)
 	//fmt.Println("scheme", r.URL.Scheme)
@@ -29,15 +31,9 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 	message := &vo.ReturnMsg{0, ""}
 	//test dw
 
-	IPAndPort := "192.168.2.165:6379"
-	conn, _ := redis.Dial("tcp", IPAndPort)
-	if conn == nil {
-		fmt.Printf("redis连接失败\n")
-	}
-	defer conn.Close()
 	//GoRedisService.OpenRedis("192.168.2.165","6379")
 	//defer GoRedisService.CloseRedis();
-	value, _ := redis.String(conn.Do("GET", "Product1"))
+	value, _ := redis.RedisPoolOne.Get("Product1")
 	if count, _ := strconv.Atoi(string(value)); count >= 100 {
 		message.SetErrno(1)
 		message.SetErrMsg("秒杀失败")
@@ -50,9 +46,9 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 		entry := &vo.QueueEntry{"", "", ""}
 		for key, value := range req.Form {
 			switch key {
-			case "userid" :
+			case "userid":
 				entry.SetUserid(strings.Join(value, ""))
-			case "productid" :
+			case "productid":
 				entry.SetProductid(strings.Join(value, ""))
 			default:
 				fmt.Fprintf(resp, "出错了")
@@ -61,7 +57,7 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 		}
 
 		if str, err := json.Marshal(entry); err == nil {
-			_, err := conn.Do("lpush", "list", string(str))
+			err := redis.RedisPoolOne.RPush("list", string(str))
 			if err != nil {
 				fmt.Println("errMsg:", err)
 				return

@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"redis"
-
 )
 
 func main() {
 
-	redisone := redis.GetRedisInstance()
+	redisone := redis.RedisPoolOne
 	//redis的数据输入输出
 	redisone.Set("123", "2123")
 	fmt.Println(redisone.Get("123"))
@@ -19,6 +18,5 @@ func main() {
 	fmt.Println(redisone.RPop("1243"))
 
 	//fmt.Println(redisone.HGetall("123"))
-
 
 }

@@ -1,16 +1,16 @@
 package controller
 
 import (
-	"net/http"
-	"fmt"
-	"strings"
-	"github.com/garyburd/redigo/redis"
-	"vo"
 	"encoding/json"
+	"fmt"
+	"github.com/garyburd/redigo/redis"
+	"net/http"
+	"strings"
+	"vo"
 )
 
 func QueryProductSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
-	req.ParseForm()  //解析参数，默认是不会解析的
+	req.ParseForm() //解析参数，默认是不会解析的
 	productid := ""
 	//for k, v := range req.Form {
 	//	fmt.Println("key:", k)
@@ -29,7 +29,7 @@ func QueryProductSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(resp, "error")
 		return
 	}
-	IPAndPort := "192.168.2.165:6379"
+	IPAndPort := "localhost:6379"
 	conn, _ := redis.Dial("tcp", IPAndPort)
 	if conn == nil {
 		fmt.Printf("redis连接失败\n")

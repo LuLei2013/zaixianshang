@@ -1,4 +1,4 @@
-package redisclient
+package redis
 
 import (
 	"errors"
@@ -10,8 +10,8 @@ type RedisClient struct {
 
 	// for pool
 	pool         *redis.Pool
-	redissvr     []string
-	redissvrcnt  int
+	redissvr     string
+
 	conntimeout  int
 	readtimeout  int
 	writetimeout int
@@ -22,26 +22,22 @@ type RedisClient struct {
 	expiresecond int
 }
 
-func NewRedisClient(redissvr map[string]string, conntimeout, readtimeout, writetimeout, maxidle, maxactive, expiresecond int) *RedisClient {
+func NewRedisClient(redissvr string, conntimeout, readtimeout, writetimeout, maxidle, maxactive, expiresecond int) *RedisClient {
 
 	rc := new(RedisClient)
 	if rc == nil {
 		return nil
 	}
 
-	redissvrarr := make([]string, 0)
-	for _, v := range redissvr {
-		redissvrarr = append(redissvrarr, v)
-	}
-	redissvrcnt := len(redissvrarr)
 
-	rc.pool = GetRedisPool(redissvrarr, redissvrcnt, conntimeout, readtimeout, writetimeout, maxidle, maxactive)
+
+	rc.pool = GetRedisPool(redissvr, conntimeout, readtimeout, writetimeout, maxidle, maxactive)
 	if rc.pool == nil {
 		return nil
 	}
 
-	rc.redissvr = redissvrarr
-	rc.redissvrcnt = redissvrcnt
+	rc.redissvr = redissvr
+
 	rc.conntimeout = conntimeout
 	rc.readtimeout = readtimeout
 	rc.writetimeout = writetimeout

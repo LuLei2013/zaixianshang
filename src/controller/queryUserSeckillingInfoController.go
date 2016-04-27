@@ -4,21 +4,46 @@ import (
 	"net/http"
 	"fmt"
 	"strings"
+    "vo"
+    "encoding/json"
+	"github.com/garyburd/redigo/redis"
 )
 
 func QueryUserSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 	req.ParseForm()  //解析参数，默认是不会解析的
-	//fmt.Println(r.Form)  //这些信息是输出到服务器端的打印信息
-	//fmt.Println("path", r.URL.Path)
-	//fmt.Println("scheme", r.URL.Scheme)
-	//fmt.Println(r.Form["url_long"])
-	for k, v := range req.Form {
-		fmt.Println("key:", k)
-		fmt.Fprintf(resp, k)
-		fmt.Println("val:", strings.Join(v, ""))
-		fmt.Fprintf(resp, ":")
-		fmt.Fprintf(resp, strings.Join(v, ""))
-		fmt.Fprintf(resp, "\n")
+	productid :=""  
+	userid :=""
+	for key, value := range req.Form {
+		if key == "userid"{
+			userid=strings.Join(value, "")
+		}else if key == "productid" {
+			productid=strings.Join(value, "")
+		}
 	}
-	//fmt.Fprintf(w, "Hello World!") //这个写入到w的是输出到客户端的
+	if userid=="" || productid ==""{
+		return 
+	}
+	IPAndPort := "192.168.2.165:6379"
+	conn, _ := redis.Dial("tcp", IPAndPort)
+	if conn == nil {
+		fmt.Printf("redis连接失败\n")
+	}
+	goodsid, _ :=	redis.String(conn.Do("GET", userid))
+	// goodsid := GoRedisService.HGetValue(userid,productid)
+	defer conn.Close()
+	retMessage := &vo.ResultPersonMsg{0, "",""}
+	if goodsid !=""{   // 秒杀成功
+		retMessage.SetErrno(0)
+		retMessage.SetStatus("1")
+		retMessage.SetGoodsId(goodsid)
+	}else{              // 秒杀失败
+		retMessage.SetErrno(0)
+		retMessage.SetStatus("2")
+		retMessage.SetGoodsId("sorry,you miss the goods")
+	}
+	// 返回请求结果
+	if jsonstr, jsonerr := json.Marshal(retMessage); jsonerr == nil {
+			fmt.Fprintf(resp, string(jsonstr))
+		}
+	fmt.Fprintf(resp, "error")
 }

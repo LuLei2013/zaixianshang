@@ -54,9 +54,9 @@ func HSetValue(key string, value string) {
 	conn.Do("SET", key, value)
 }
 
-func INC(key string) {
-	conn.Do("INCR",key)
-}
+//func INC(key string) {
+//	conn.Do("INCR",key)
+//}
 
 func LPushValue(key string, value string) {
 	conn.Do("lpush", key, value)

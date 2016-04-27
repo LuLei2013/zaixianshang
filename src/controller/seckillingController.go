@@ -3,6 +3,7 @@ import (
 	"net/http"
 	"fmt"
 	"strings"
+	"GoRedisService"
 )
 
 func Seckilling(resp http.ResponseWriter, req *http.Request) {
@@ -11,6 +12,13 @@ func Seckilling(resp http.ResponseWriter, req *http.Request) {
 	//fmt.Println("path", r.URL.Path)
 	//fmt.Println("scheme", r.URL.Scheme)
 	//fmt.Println(r.Form["url_long"])
+
+
+	//test dw
+	defer GoRedisService.CloseRedis();
+	GoRedisService.OpenRedis("localhost","6379")
+	GoRedisService.LPushValue("list","1")
+
 	for k, v := range req.Form {
 		fmt.Println("key:", k)
 		fmt.Fprintf(resp, k)

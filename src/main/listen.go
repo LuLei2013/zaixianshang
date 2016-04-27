@@ -27,13 +27,14 @@ func main () {
 			}else {
 				//fmt.Print("else here")
 				tmp :=GoRedisService.HGetValue("Product1")
-				//fmt.Print("  "+tmp)
-				//fmt.Print("\n")
+				fmt.Print("  "+tmp)
+				fmt.Print("\n")
 				b,_ := strconv.Atoi(tmp);
 				GoRedisService.HSetValue("Product1",strconv.Itoa(b+1))
 			}
 			//fmt.Print(popValue + "\n")
 		}
+
 	}
 
 

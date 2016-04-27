@@ -59,7 +59,10 @@ func HSetValue(key string, value string) {
 //}
 
 func LPushValue(key string, value string) {
-	conn.Do("lpush", key, value)
+	_, err := conn.Do("lpush", key, value)
+	if err != nil {
+		fmt.Println("errMsg:", err)
+	}
 }
 
 func RPopValue (key string) string {

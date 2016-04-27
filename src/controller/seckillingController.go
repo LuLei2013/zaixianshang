@@ -2,11 +2,11 @@ package controller
 import (
 	"net/http"
 	"fmt"
-	"GoRedisService"
 	"strconv"
 	"vo"
 	"encoding/json"
 	"strings"
+	"github.com/garyburd/redigo/redis"
 )
 
 var counter = 0
@@ -28,9 +28,17 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 	}
 	message := &vo.ReturnMsg{0, ""}
 	//test dw
-	defer GoRedisService.CloseRedis();
-	GoRedisService.OpenRedis("192.168.2.165","6379")
-	if count, _ := strconv.Atoi(GoRedisService.HGetValue("Product1")); count >= 100 {
+
+	IPAndPort := "192.168.2.165:6379"
+	conn, _ := redis.Dial("tcp", IPAndPort)
+	if conn == nil {
+		fmt.Printf("redis连接失败\n")
+	}
+	defer conn.Close()
+	//GoRedisService.OpenRedis("192.168.2.165","6379")
+	//defer GoRedisService.CloseRedis();
+	value, _ := redis.String(conn.Do("GET", "Product1"))
+	if count, _ := strconv.Atoi(string(value)); count >= 100 {
 		message.SetErrno(1)
 		message.SetErrMsg("秒杀失败")
 		if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {
@@ -53,7 +61,11 @@ func Seckilling(resp http.ResponseWriter, req *http.Request){
 		}
 
 		if str, err := json.Marshal(entry); err == nil {
-			GoRedisService.LPushValue("list", string(str))
+			_, err := conn.Do("lpush", "list", string(str))
+			if err != nil {
+				fmt.Println("errMsg:", err)
+			}
+			//GoRedisService.LPushValue("list", string(str))
 			message.SetErrno(0)
 			message.SetErrMsg("秒杀中")
 			if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {

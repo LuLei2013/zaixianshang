@@ -47,7 +47,15 @@ func NewRedisClient(redissvr string, conntimeout, readtimeout, writetimeout, max
 
 	return rc
 }
-
+func (rc *RedisClient) Exists(key string)(bool,error) {
+	c := rc.pool.Get()
+	defer c.Close()
+	exists, err := redis.Bool((c.Do("EXISTS", key)))
+	if err != nil {
+		return false,err// handle error return from c.Do or type conversion error.
+	}
+	return exists,err
+}
 func (rc *RedisClient) Set(key, value string) error {
 	c := rc.pool.Get()
 	defer c.Close()

@@ -1,22 +1,20 @@
-package main
+package test
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	//"strings"
-	//"io"
-	//"os"
 	"fmt"
 	"sync"
 	"time"
+	"testing"
 )
 
 var config map[string]interface{}
 var baseTime time.Time
 
-func main() {
+func Test_WebPress(t *testing.T) {
 
 	config = loadConfig()
 	//baseurl := config["url"].(string)

@@ -1,12 +1,13 @@
-package main
+package test
 
 import (
-	"fmt"
-	"os"
-	"util"
+"fmt"
+"os"
+"util"
+"testing"
 )
 
-func main() {
+func Test_Config(t *testing.T) {
 	myConfig := new(util.Config)
 	path, _ := os.Getwd()
 	fmt.Println(path)

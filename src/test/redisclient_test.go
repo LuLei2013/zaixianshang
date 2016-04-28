@@ -1,13 +1,14 @@
-package main
+package test
 
 import (
 	"fmt"
-	"redis"
+	"dao"
+	"testing"
 )
 
-func main() {
+func Test_Redis(t *testing.T) {
 
-	redisone := redis.RedisPoolOne
+	redisone := dao.RedisPoolOne
 	//redis的数据输入输出
 	redisone.Set("123", "2123")
 	fmt.Println(redisone.Get("123"))

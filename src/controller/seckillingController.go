@@ -23,6 +23,8 @@ func Seckilling(resp http.ResponseWriter, req *http.Request) {
 		}
 		if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {
 			fmt.Fprintf(resp, string(jsonstr))
+		} else {
+			fmt.Fprintf(resp, "json错误")
 		}
 	}()
 	for k, v := range req.Form {
@@ -30,7 +32,4 @@ func Seckilling(resp http.ResponseWriter, req *http.Request) {
 		fmt.Println("val:", strings.Join(v, ""))
 	}
 	message = service.ServiceSeckilling(req)
-	if jsonstr, jsonerr := json.Marshal(message); jsonerr == nil {
-		fmt.Fprintf(resp, string(jsonstr))
-	}
 }

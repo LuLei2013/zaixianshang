@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"vo"
+	"fmt"
 )
 
 //
@@ -31,12 +32,14 @@ func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
 		}
 	}
 	if userid == "" || productid == "" {
-		retMessage.SetErrno(1)
-		retMessage.SetStatus("2")
-		retMessage.SetGoodsId("秒杀失败，秒杀参数错误")
-		return retMessage
+		fmt.Println("errMsg:", "参数错误")
+		panic("参数错误")
 	}
-	value, _ := redis.RedisPoolOne.Get(vo.Product1_Query_Name)
+	if (productid != vo.Product1_Query_Name && productid != vo.Product2_Query_Name && productid != vo.Product3_Query_Name) {
+		fmt.Println("errMsg:", "productid不存在")
+		panic("productid不存在")
+	}
+	value, _ := redis.RedisPoolOne.Get(vo.Product_Pre + vo.Product1_Query_Name)
 	countGoodsSold, _ := strconv.Atoi(string(value))
 	if 0 == countGoodsSold {
 		retMessage.SetErrno(0)

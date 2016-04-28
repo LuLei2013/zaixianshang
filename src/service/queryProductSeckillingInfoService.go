@@ -2,23 +2,14 @@ package service
 
 import (
 	"dao"
-	"net/http"
 	"strings"
 	"vo"
 	"fmt"
 )
 
 //根据商品id查询成功秒杀的所有用户id和用户购买商品的具体编号
-func ServiceQueryProductSeckillingInfo(req *http.Request) *vo.ResultProductMsg {
-	req.ParseForm()
-	productid := ""
-	for key, value := range req.Form {
-		if key == "productid" {
-			productid = strings.Join(value, "")
-		}
-	}
+func ServiceQueryProductSeckillingInfo(productid string) *vo.ResultProductMsg {
 	returnMsg := &vo.ResultProductMsg{0, nil}
-	//fmt.Print(productid)
 	if (productid != vo.Product1_Query_Name) {
 		fmt.Println("errMsg:", "productid不存在")
 		panic("productid不存在")

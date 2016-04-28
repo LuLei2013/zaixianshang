@@ -4,13 +4,11 @@ import (
 	"dao"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strconv"
-	"strings"
 	"vo"
 )
 
-func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {
+func ServiceSeckilling(userid ,productid string) *vo.ReturnMsg {
 	message := &vo.ReturnMsg{0, ""} //返回消息
 	if !vo.Flag {
 		message.SetErrno(0)
@@ -23,25 +21,14 @@ func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {
 			message.SetErrno(0)
 			message.SetErrMsg("秒杀失败")
 		} else {
-			req.ParseForm() //解析参数，默认是不会解析的
 			entry := &vo.QueueEntry{"", "", ""}
-			for key, value := range req.Form {
-				strValue := strings.Join(value, "")
-				switch key {
-				case "userid":
-					entry.SetUserid(strValue)
-				case "productid": {
-					if (strValue == vo.Product1_Query_Name || strValue == vo.Product2_Query_Name || strValue == vo.Product3_Query_Name) {
-						entry.SetProductid(vo.Product_Pre + strValue)
-					} else {
-						fmt.Println("errMsg:", "productid不存在")
-						panic("productid不存在")
-					}
-				}
-				default:
-					continue
-				}
+			if (productid == vo.Product1_Query_Name || productid == vo.Product2_Query_Name || productid == vo.Product3_Query_Name) {
+				entry.SetProductid(vo.Product_Pre + productid)
+			} else {
+				fmt.Println("errMsg:", "productid不存在")
+				panic("productid不存在")
 			}
+			entry.SetUserid(userid)
 			if entry.GetUserid() == "" || entry.GetProductid() == "" {
 				fmt.Println("errMsg:", "参数错误")
 				panic("参数错误")

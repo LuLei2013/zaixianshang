@@ -27,9 +27,15 @@ func Seckilling(resp http.ResponseWriter, req *http.Request) {
 			fmt.Fprintf(resp, "json错误")
 		}
 	}()
-	for k, v := range req.Form {
-		fmt.Println("key:", k)
-		fmt.Println("val:", strings.Join(v, ""))
+	userid, productid := "", ""
+	for key, value := range req.Form {
+		if key == "userid" {
+			userid = strings.Join(value, "")
+		} else if key == "productid" {
+			productid = strings.Join(value, "")
+		}
+		fmt.Print("key:", key)
+		fmt.Println("  value:", strings.Join(value, ""))
 	}
-	message = service.ServiceSeckilling(req)
+	message = service.ServiceSeckilling(userid, productid)
 }

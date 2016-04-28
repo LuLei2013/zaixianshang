@@ -2,9 +2,7 @@ package service
 
 import (
 	"dao"
-	"net/http"
 	"strconv"
-	"strings"
 	"vo"
 	"fmt"
 )
@@ -19,18 +17,8 @@ import (
 //         status :3  在秒杀中    , 没有秒杀到，redis中未查询到goodsId，但是商品还未卖完
 //
 //
-func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
-	req.ParseForm() //解析参数，默认是不会解析的
-	productid := ""
-	userid := ""
+func QueryUserSeckillingInfo(userid ,productid string) *vo.ResultPersonMsg {
 	retMessage := &vo.ResultPersonMsg{0, "", ""}
-	for key, value := range req.Form {
-		if key == "userid" {
-			userid = strings.Join(value, "")
-		} else if key == "productid" {
-			productid = strings.Join(value, "")
-		}
-	}
 	if userid == "" || productid == "" {
 		fmt.Println("errMsg:", "参数错误")
 		panic("参数错误")
@@ -47,7 +35,6 @@ func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
 		retMessage.SetGoodsId("秒杀未开始...")
 		return retMessage
 	}
-
 	goodsid, _ := dao.RedisPoolOne.Get(userid)
 	if goodsid != "" { // 秒杀成功
 		retMessage.SetErrno(0)
@@ -64,6 +51,5 @@ func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
 		retMessage.SetStatus("2")
 		retMessage.SetGoodsId("秒杀失败,未秒杀到商品")
 	}
-
 	return retMessage
 }

@@ -1,4 +1,5 @@
 package main
+
 import (
 	"fmt"
 	"os"
@@ -7,7 +8,7 @@ import (
 
 func main() {
 	myConfig := new(util.Config)
-	path,_ := os.Getwd()
+	path, _ := os.Getwd()
 	fmt.Println(path)
 	path += "/src/util/config.txt"
 	fmt.Println(path)

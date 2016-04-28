@@ -5,20 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"service"
-	"strings"
 )
 
+//返回商品秒杀结果，首先解析请求参数，再调用ServiceQueryProductSeckillingInfo获得商品的秒杀结果
 func QueryProductSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
-	req.ParseForm() //解析参数，默认是不会解析的
-	productid := ""
+	req.ParseForm()
 
-	for key, value := range req.Form {
-		if key == "productid" {
-			productid = strings.Join(value, "")
-		}
-	}
-
-	info := service.ServiceQueryProductSeckillingInfo(productid)
+	info := service.ServiceQueryProductSeckillingInfo(req)
 	if jsonstr, jsonerr := json.Marshal(info); jsonerr == nil {
 		fmt.Fprintf(resp, string(jsonstr))
 		return

@@ -6,6 +6,7 @@ import (
 	"vo"
 )
 
+//导入redis包时，init初始化，生成redis池全局变量RedisPoolOne，并在redis池中加入商品被秒件数“0”
 var RedisPoolOne *RedisClient
 
 func init() {
@@ -16,17 +17,13 @@ func init() {
 }
 
 type RedisClient struct {
-	// for pool
-	pool     *redis.Pool
-	redissvr string
-
+	pool         *redis.Pool
+	redissvr     string
 	conntimeout  int
 	readtimeout  int
 	writetimeout int
 	maxidle      int
 	maxactive    int
-
-	// for rc
 	expiresecond int
 }
 

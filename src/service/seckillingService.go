@@ -1,13 +1,13 @@
 package service
 
 import (
-	"vo"
-	"redis"
-	"strconv"
-	"net/http"
-	"strings"
+	"dao"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+	"strings"
+	"vo"
 )
 
 func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {

@@ -65,7 +65,7 @@ func LPushValue(key string, value string) {
 	}
 }
 
-func RPopValue (key string) string {
+func RPopValue(key string) string {
 	value, _ := redis.String(conn.Do("rpop", key))
 	return string(value)
 }

@@ -1,6 +1,9 @@
+/**提供redis的直接接口
+*用于循环携程listen——redis调用
+ */
 package dao
 
-import(
+import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"strings"
@@ -8,6 +11,7 @@ import(
 
 var conn redis.Conn
 
+//输入redis服务器ip与port,返回redis连接对象
 func OpenRedis(IP string, Port string) {
 	IPAndPort := IP + ":" + Port
 	conn, _ = redis.Dial("tcp", IPAndPort)

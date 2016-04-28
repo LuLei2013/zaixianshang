@@ -1,3 +1,7 @@
+/**导入redis包时，init初始化，生成redis池全局变量RedisPoolOne，
+ *并在redis池中加入商品被秒件数“0”
+ *封装了get\set\Lrang\Rpush等接口
+ */
 package dao
 
 import (
@@ -6,16 +10,16 @@ import (
 	"vo"
 )
 
-//导入redis包时，init初始化，生成redis池全局变量RedisPoolOne，并在redis池中加入商品被秒件数“0”
 var RedisPoolOne *RedisClient
 
 func init() {
 	RedisPoolOne = GetRedisInstance()
-	RedisPoolOne.Set(vo.Product_Pre + vo.Product1_Query_Name, "0")
-	RedisPoolOne.Set(vo.Product_Pre + vo.Product2_Query_Name, "0")
-	RedisPoolOne.Set(vo.Product_Pre + vo.Product3_Query_Name, "0")
+	RedisPoolOne.Set(vo.Product_Pre+vo.Product1_Query_Name, "0")
+	RedisPoolOne.Set(vo.Product_Pre+vo.Product2_Query_Name, "0")
+	RedisPoolOne.Set(vo.Product_Pre+vo.Product3_Query_Name, "0")
 }
 
+//定义redisPool对象连接ip、超时时长等属性
 type RedisClient struct {
 	pool         *redis.Pool
 	redissvr     string

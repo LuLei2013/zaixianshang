@@ -1,6 +1,7 @@
+/**提供生成redisPool的接口
+ *进行连接错误处理
+ */
 package dao
-
-//提供生成redisPool的接口
 
 import (
 	"errors"

@@ -7,16 +7,18 @@ import (
 	"fmt"
 )
 
-//
-// errrno : 1
-//         status :2 参数错误
-// errno  :0
-//         status :0  秒杀还未开始 ,商品没有被卖了
-//         status :1  秒杀成功    , 成功秒杀到，redis中查询到goodsId
-//         status :2  秒杀失败    , 没有秒杀到，redis中未查询到goodsId，且商品已经被卖完
-//         status :3  在秒杀中    , 没有秒杀到，redis中未查询到goodsId，但是商品还未卖完
-//
-//
+/* 
+ *       
+ *
+ * errno  : 1
+ *        status :2 参数错误
+ * errno  : 0
+ *        status :0  秒杀还未开始 ,商品被卖了
+ *        status :1  秒杀成功    , 成功秒杀到，redis中查询到goodsId
+ *        status :2  秒杀失败    , 没有秒杀到，redis中未查询到goodsId，且商品已经被卖完
+ *        status :3  在秒杀中    , 没有秒杀到，redis中未查询到goodsId，但是商品还未卖完
+ *
+ */
 func QueryUserSeckillingInfo(userid ,productid string) *vo.ResultPersonMsg {
 	retMessage := &vo.ResultPersonMsg{0, "", ""}
 	if userid == "" || productid == "" {

@@ -7,16 +7,21 @@ import (
 )
 
 var (
+	// redis 和 web Server的Ip地址，默认为localhost
 	Ip string
+	// redis 和 web Server的Ip地址，默认为9090
 	Port string
+	//  商品标识前缀
 	Product_Pre string
-
+	//  要卖的商品数量
 	Product1_Max_Num int
+	//  第一种商品productId
 	Product1_Query_Name string
+	//  第-种商品key 数据库标识
 	Product1_Query_String string
-
+    //  商品是否卖完的标识，优化使用
 	Flag bool
-
+    // 如上
 	Product2_Max_Num int
 	Product2_Query_Name string
 	Product2_Query_String string
@@ -27,6 +32,7 @@ var (
 )
 
 func init() {
+	//读取properties 文件中的各种配置参数
 	myConfig := new(util.Config)
 	path,_ := os.Getwd()
 	path += "/conf/properties"

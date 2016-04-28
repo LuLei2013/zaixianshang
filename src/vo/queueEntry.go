@@ -1,8 +1,15 @@
 package vo
 
+/**
+ * 实体类，映射redis中list队列中的每一项
+ *
+ */
 type QueueEntry struct {
+	/* 用户标识 */
 	Userid string	`json:"userid"`
+	/* 要秒杀商品标识 */
 	Productid string	`json:"productid"`
+	/* 请求时间戳 */
 	Time string	`json:"time"`
 }
 

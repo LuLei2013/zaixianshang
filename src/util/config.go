@@ -1,4 +1,7 @@
 package util
+/**
+ *  工具类，复制辅助读取 conf/properties中各配置参数
+ */
 
 import (
 	"bufio"

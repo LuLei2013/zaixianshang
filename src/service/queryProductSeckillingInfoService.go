@@ -24,7 +24,7 @@ func ServiceQueryProductSeckillingInfo(req *http.Request) *vo.ResultProductMsg {
 		panic("productid不存在")
 	}
 
-	productInfo, _ := redis.RedisPoolOne.LRange(vo.Product1_Query_String)
+	productInfo, _ := dao.RedisPoolOne.LRange(vo.Product1_Query_String)
 
 	if productInfo == nil {
 		fmt.Println("errMsg:", "无法查询到结果")

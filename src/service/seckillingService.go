@@ -17,7 +17,7 @@ func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {
 		message.SetErrMsg("秒杀失败")
 		return message
 	}
-	if value, err := redis.RedisPoolOne.Get(vo.Product_Pre + vo.Product1_Query_Name); err == nil {
+	if value, err := dao.RedisPoolOne.Get(vo.Product_Pre + vo.Product1_Query_Name); err == nil {
 		if count, _ := strconv.Atoi(string(value)); count >= vo.Product1_Max_Num {
 			vo.Flag = false
 			message.SetErrno(0)
@@ -47,7 +47,7 @@ func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {
 				panic("参数错误")
 			}
 			if str, err := json.Marshal(entry); err == nil {
-				redisError := redis.RedisPoolOne.RPush("list", string(str))
+				redisError := dao.RedisPoolOne.RPush("list", string(str))
 				if redisError != nil {
 					fmt.Println("errMsg:", redisError)
 					panic(redisError.Error())

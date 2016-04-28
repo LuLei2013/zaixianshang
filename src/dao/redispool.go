@@ -1,4 +1,4 @@
-package redis
+package dao
 
 //提供生成redisPool的接口
 

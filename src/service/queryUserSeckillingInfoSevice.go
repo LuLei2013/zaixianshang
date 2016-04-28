@@ -39,7 +39,7 @@ func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
 		fmt.Println("errMsg:", "productid不存在")
 		panic("productid不存在")
 	}
-	value, _ := redis.RedisPoolOne.Get(vo.Product_Pre + vo.Product1_Query_Name)
+	value, _ := dao.RedisPoolOne.Get(vo.Product_Pre + vo.Product1_Query_Name)
 	countGoodsSold, _ := strconv.Atoi(string(value))
 	if 0 == countGoodsSold {
 		retMessage.SetErrno(0)
@@ -48,7 +48,7 @@ func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
 		return retMessage
 	}
 
-	goodsid, _ := redis.RedisPoolOne.Get(userid)
+	goodsid, _ := dao.RedisPoolOne.Get(userid)
 	if goodsid != "" { // 秒杀成功
 		retMessage.SetErrno(0)
 		retMessage.SetStatus("1")

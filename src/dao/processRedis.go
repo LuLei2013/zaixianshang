@@ -1,4 +1,4 @@
-package GoRedisService
+package dao
 
 import (
 	"fmt"

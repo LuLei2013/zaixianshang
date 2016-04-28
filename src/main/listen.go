@@ -1,7 +1,7 @@
 package main
 
 import (
-	"GoRedisService"
+	"dao"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	defer GoRedisService.CloseRedis()
+	defer dao.CloseRedis()
 	defer func(){ // 必须要先声明defer，否则不能捕获到panic异常
 		if err:=recover();err!=nil{
 			fmt.Println(err)
@@ -17,21 +17,21 @@ func main() {
 	}()
 
 	fmt.Println("listen the world!")
-	GoRedisService.OpenRedis(vo.Ip, vo.Port)
+	dao.OpenRedis(vo.Ip, vo.Port)
 	//初始化商品数量
-	GoRedisService.HSetValue(vo.Product_Pre+vo.Product1_Query_Name, "0")
+	dao.HSetValue(vo.Product_Pre+vo.Product1_Query_Name, "0")
 
 	for {
 		//超过商品总数,停止监听
 		//todo 添加配置文件,尝试多商品
-		if count,err := strconv.Atoi(GoRedisService.HGetValue(vo.Product_Pre+vo.Product1_Query_Name)); count>= vo.Product1_Max_Num {
+		if count,err := strconv.Atoi(dao.HGetValue(vo.Product_Pre+vo.Product1_Query_Name)); count>= vo.Product1_Max_Num {
 			if err != nil {
 				panic(err)
 			}
 			fmt.Println("listen finish!")
 			break
 		}
-		popValue := GoRedisService.RPopValue("list") //消费队列
+		popValue := dao.RPopValue("list") //消费队列
 		if popValue != "" {
 			fmt.Print("popValue:" + popValue)
 			var qe vo.QueueEntry
@@ -57,7 +57,7 @@ func main() {
  *@return bool
  */
 func checkValid(userId string) bool {
-	if GoRedisService.HGetValue(userId) != "" {
+	if dao.HGetValue(userId) != "" {
 		return false
 	}
 	return true
@@ -67,20 +67,20 @@ func checkValid(userId string) bool {
 func incCount(productId string, userId string) {
 	//商品数量计数器加一
 	goodsid := 1
-	tmp := GoRedisService.HGetValue(productId)
+	tmp := dao.HGetValue(productId)
 	//fmt.Print("  "+tmp)
 	//fmt.Print("\n")
 	b, _ := strconv.Atoi(tmp)
 	goodsid = b + 1
-	GoRedisService.HSetValue(productId, strconv.Itoa(goodsid))
+	dao.HSetValue(productId, strconv.Itoa(goodsid))
 
 	//存储用户和其购买的商品关系
-	GoRedisService.HSetValue(userId, strconv.Itoa(goodsid))
+	dao.HSetValue(userId, strconv.Itoa(goodsid))
 	fmt.Print(userId + "****" + strconv.Itoa(goodsid))
 	fmt.Print("\n")
 	newValue := userId + "*" + strconv.Itoa(goodsid)
 	fmt.Print(newValue)
 	fmt.Print("\n")
 	//向全部购买信息中push数据
-	GoRedisService.LPushValue(vo.Product1_Query_String, newValue)
+	dao.LPushValue(vo.Product1_Query_String, newValue)
 }

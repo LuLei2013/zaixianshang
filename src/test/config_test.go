@@ -1,4 +1,4 @@
-package main
+package test
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"util"
 )
 
-func main() {
+func Test_Config() {
 	myConfig := new(util.Config)
 	path, _ := os.Getwd()
 	fmt.Println(path)

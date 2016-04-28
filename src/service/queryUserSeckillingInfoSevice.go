@@ -35,7 +35,7 @@ func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
 		fmt.Println("errMsg:", "参数错误")
 		panic("参数错误")
 	}
-	if (productid != vo.Product1_Query_Name && productid != vo.Product2_Query_Name && productid != vo.Product3_Query_Name) {
+	if (productid != vo.Product1_Query_Name ) {
 		fmt.Println("errMsg:", "productid不存在")
 		panic("productid不存在")
 	}

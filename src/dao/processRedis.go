@@ -74,10 +74,7 @@ func LPopValue(key string) string {
 }
 
 func HGetValue(key string) string {
-	value, err := redis.String(conn.Do("GET", key))
-	if err != nil {
-		fmt.Println("GetValue:", err)
-	}
+	value, _ := redis.String(conn.Do("GET", key))
 	return string(value)
 }
 func HisExist(key string) bool {

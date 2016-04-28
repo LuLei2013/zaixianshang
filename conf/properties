@@ -14,5 +14,6 @@ query_name=333
 total_query_name=sum333
 
 [common]
+query_prefix=poduct_
 ip=127.0.0.1
 port=6379

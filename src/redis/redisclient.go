@@ -4,11 +4,13 @@ import (
 	"errors"
 	"github.com/garyburd/redigo/redis"
 	"strconv"
+	"vo"
 )
 
 var RedisPoolOne *RedisClient
 
 func init() {
+	vo.Init()
 	RedisPoolOne = GetRedisInstance()
 }
 
@@ -28,8 +30,7 @@ type RedisClient struct {
 }
 
 func GetRedisInstance() *RedisClient {
-	redissvr := "localhost:6379"
-
+	redissvr := vo.Ip + ":" + vo.Port
 	conntimeout := 100
 	readtimeout := 50
 	writetimeout := 50

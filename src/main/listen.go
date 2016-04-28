@@ -17,7 +17,6 @@ func main() {
 	}()
 
 	fmt.Println("listen the world!")
-	//vo.Init()//初始化配置文件
 	GoRedisService.OpenRedis(vo.Ip, vo.Port)
 	for {
 		//超过商品总数,停止监听
@@ -42,7 +41,7 @@ func main() {
 				continue//解压失败则淘汰该用户,这里不抛出异常
 			}
 			if checkValid(userId) {
-				incCount(vo.Product1_Query_Name,userId)//写入redis
+				incCount(vo.Product1_Query_Name, userId) //写入redis
 			}
 			//fmt.Print(popValue + "\n")
 		}
@@ -72,7 +71,6 @@ func incCount(productId string, userId string) {
 	goodsid = b + 1
 	GoRedisService.HSetValue(productId, strconv.Itoa(goodsid))
 
-
 	//存储用户和其购买的商品关系
 	GoRedisService.HSetValue(userId, strconv.Itoa(goodsid))
 	fmt.Print(userId + "****" + strconv.Itoa(goodsid))
@@ -81,5 +79,5 @@ func incCount(productId string, userId string) {
 	fmt.Print(newValue)
 	fmt.Print("\n")
 	//向全部购买信息中push数据
-	GoRedisService.LPushValue(vo.Product1_Query_String,newValue)
+	GoRedisService.LPushValue(vo.Product1_Query_String, newValue)
 }

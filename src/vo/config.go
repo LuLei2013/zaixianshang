@@ -9,6 +9,8 @@ import (
 var (
 	Ip string
 	Port string
+	Product_Pre string
+
 	Product1_Max_Num int
 	Product1_Query_Name string
 	Product1_Query_String string
@@ -29,8 +31,11 @@ func init() {
 	path,_ := os.Getwd()
 	path += "/conf/properties"
 	myConfig.InitConfig(path)
+
 	Ip = myConfig.Read("common", "ip")
 	Port = myConfig.Read("common", "port")
+	Product_Pre = myConfig.Read("common", "query_prefix")
+
 	Product1_Max_Num, _ = strconv.Atoi(myConfig.Read("product_1", "max_num"))
 	Product1_Query_Name = myConfig.Read("product_1", "query_name")
 	Product1_Query_String = myConfig.Read("product_1", "total_query_name")

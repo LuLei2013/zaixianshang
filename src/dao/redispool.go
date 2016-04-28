@@ -1,5 +1,7 @@
 package redis
 
+//提供生成redisPool的接口
+
 import (
 	"errors"
 	"github.com/garyburd/redigo/redis"
@@ -19,7 +21,7 @@ func GetRedisPool(redissvr string, conntimeout, readtimeout, writetimeout, maxid
 			MaxActive: maxactive,
 			Dial: func() (redis.Conn, error) {
 
-				c, err := redis.DialTimeout("tcp", redissvr, time.Duration(conntimeout) * time.Millisecond, time.Duration(readtimeout) * time.Millisecond, time.Duration(writetimeout) * time.Millisecond)
+				c, err := redis.DialTimeout("tcp", redissvr, time.Duration(conntimeout)*time.Millisecond, time.Duration(readtimeout)*time.Millisecond, time.Duration(writetimeout)*time.Millisecond)
 				if err == nil && c != nil {
 					return c, nil
 				}

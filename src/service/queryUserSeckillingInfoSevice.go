@@ -1,12 +1,13 @@
 package service
 
 import (
-	"redis"
-	"strings"
-	"vo"
+	"dao"
 	"net/http"
 	"strconv"
+	"strings"
+	"vo"
 )
+
 //
 // errrno : 1
 //         status :2 参数错误
@@ -17,7 +18,7 @@ import (
 //         status :3  在秒杀中    , 没有秒杀到，redis中未查询到goodsId，但是商品还未卖完
 //
 //
-func QueryUserSeckillingInfo(req *http.Request)  *vo.ResultPersonMsg {
+func QueryUserSeckillingInfo(req *http.Request) *vo.ResultPersonMsg {
 	req.ParseForm() //解析参数，默认是不会解析的
 	productid := ""
 	userid := ""
@@ -36,25 +37,25 @@ func QueryUserSeckillingInfo(req *http.Request)  *vo.ResultPersonMsg {
 		return retMessage
 	}
 	value, _ := redis.RedisPoolOne.Get(vo.Product1_Query_Name)
-	countGoodsSold, _ := strconv.Atoi(string(value)); 
-	if 0 == countGoodsSold{
+	countGoodsSold, _ := strconv.Atoi(string(value))
+	if 0 == countGoodsSold {
 		retMessage.SetErrno(0)
 		retMessage.SetStatus("0")
 		retMessage.SetGoodsId("秒杀未开始...")
-		return retMessage;
+		return retMessage
 	}
 
 	goodsid, _ := redis.RedisPoolOne.Get(userid)
-	if goodsid != ""{   // 秒杀成功
+	if goodsid != "" { // 秒杀成功
 		retMessage.SetErrno(0)
 		retMessage.SetStatus("1")
 		retMessage.SetGoodsId(goodsid)
 	} else { // 秒杀失败
-		if  countGoodsSold< vo.Product1_Max_Num {
+		if countGoodsSold < vo.Product1_Max_Num {
 			retMessage.SetErrno(0)
 			retMessage.SetStatus("3")
 			retMessage.SetGoodsId("在秒杀中，请稍后查询...")
-			return retMessage;
+			return retMessage
 		}
 		retMessage.SetErrno(0)
 		retMessage.SetStatus("2")

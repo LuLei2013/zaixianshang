@@ -11,9 +11,9 @@ var RedisPoolOne *RedisClient
 
 func init() {
 	RedisPoolOne = GetRedisInstance()
-	RedisPoolOne.Set(vo.Product1_Query_Name, "0")
-	RedisPoolOne.Set(vo.Product2_Query_Name, "0")
-	RedisPoolOne.Set(vo.Product3_Query_Name, "0")
+	RedisPoolOne.Set(vo.Product_Pre + vo.Product1_Query_Name, "0")
+	RedisPoolOne.Set(vo.Product_Pre + vo.Product2_Query_Name, "0")
+	RedisPoolOne.Set(vo.Product_Pre + vo.Product3_Query_Name, "0")
 }
 
 type RedisClient struct {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"vo"
+	"fmt"
 )
 
 //根据商品id查询成功秒杀的所有用户id和用户购买商品的具体编号
@@ -16,18 +17,16 @@ func ServiceQueryProductSeckillingInfo(req *http.Request) *vo.ResultProductMsg {
 		}
 	}
 	returnMsg := &vo.ResultProductMsg{0, nil}
-	if productid != vo.Product1_Query_Name {
-		returnMsg.SetErrno(1)
-		returnMsg.SetList(nil)
-		return returnMsg
+	if (productid != vo.Product1_Query_Name && productid != vo.Product2_Query_Name && productid != vo.Product3_Query_Name) {
+		fmt.Println("errMsg:", "productid不存在")
+		panic("productid不存在")
 	}
 
 	productInfo, _ := redis.RedisPoolOne.LRange(vo.Product1_Query_String)
 
 	if productInfo == nil {
-		returnMsg.SetErrno(1)
-		returnMsg.SetList(nil)
-		return returnMsg
+		fmt.Println("errMsg:", "无法查询到结果")
+		panic("无法查询到结果")
 	}
 	goodsList := []vo.KillEntry{}
 	for _, entry := range productInfo {

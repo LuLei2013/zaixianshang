@@ -18,7 +18,6 @@ package redistest
 import (
 	"errors"
 	"time"
-
 	"github.com/garyburd/redigo/redis"
 )
 

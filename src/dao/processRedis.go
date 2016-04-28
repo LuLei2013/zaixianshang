@@ -1,6 +1,6 @@
 package dao
 
-import (
+import(
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"strings"

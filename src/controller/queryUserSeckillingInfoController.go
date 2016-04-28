@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"dao"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"redis"
-	"strings"
-    	"vo"
-    	"encoding/json"
 	"strconv"
+	"strings"
+	"vo"
 )
 
 func QueryUserSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
@@ -34,7 +34,7 @@ func QueryUserSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	goodsid, _ := redis.RedisPoolOne.Get(userid)
-	if goodsid != ""{   // 秒杀成功
+	if goodsid != "" { // 秒杀成功
 		retMessage.SetErrno(0)
 		retMessage.SetStatus("1")
 		retMessage.SetGoodsId(goodsid)

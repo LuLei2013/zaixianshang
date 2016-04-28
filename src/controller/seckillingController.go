@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"service"
+	"strings"
 )
 
 var counter = 0
@@ -23,7 +23,6 @@ func Seckilling(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(resp, string(jsonstr))
 	}
 	//test dw
-
 
 	//value, _ := redis.RedisPoolOne.Get(vo.Product1_Query_Name)
 	//if count, _ := strconv.Atoi(string(value)); count >= vo.Product1_Max_Num {

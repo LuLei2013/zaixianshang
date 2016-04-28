@@ -1,13 +1,13 @@
 package service
 
 import (
-	"vo"
-	"redis"
-	"strconv"
-	"net/http"
-	"strings"
+	"dao"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+	"strings"
+	"vo"
 )
 
 func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {
@@ -30,15 +30,16 @@ func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {
 				switch key {
 				case "userid":
 					entry.SetUserid(strValue)
-				case "productid": {
-					if (strValue == vo.Product1_Query_Name || strValue == vo.Product2_Query_Name || strValue == vo.Product3_Query_Name) {
-						entry.SetProductid(strValue)
-					} else {
-						message.SetErrno(1)
-						message.SetErrMsg("参数错误")
-						return message
+				case "productid":
+					{
+						if strValue == vo.Product1_Query_Name || strValue == vo.Product2_Query_Name || strValue == vo.Product3_Query_Name {
+							entry.SetProductid(strValue)
+						} else {
+							message.SetErrno(1)
+							message.SetErrMsg("参数错误")
+							return message
+						}
 					}
-				}
 				default:
 					continue
 				}

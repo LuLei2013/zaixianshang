@@ -17,12 +17,8 @@ func QueryProductSeckillingInfo(resp http.ResponseWriter, req *http.Request) {
 			productid = strings.Join(value, "")
 		}
 	}
-	if productid == "" {
-		fmt.Fprintf(resp, "error")
-		return
-	}
 
-	info := service.ServiceQueryProductSeckillingInfo()
+	info := service.ServiceQueryProductSeckillingInfo(productid)
 	if jsonstr, jsonerr := json.Marshal(info); jsonerr == nil {
 		fmt.Fprintf(resp, string(jsonstr))
 		return

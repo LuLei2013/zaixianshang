@@ -67,11 +67,17 @@ func LPushValue(key string, value string) {
 
 func RPopValue (key string) string {
 	value, _ := redis.String(conn.Do("rpop", key))
+	//if err != nil {
+	//	fmt.Println("RPopValue:", err)
+	//}
 	return string(value)
 }
 
 func HGetValue(key string) string {
-	value, _ := redis.String(conn.Do("GET", key))
+	value, err := redis.String(conn.Do("GET", key))
+	if err != nil {
+		fmt.Println("GetValue:", err)
+	}
 	return string(value)
 }
 func HisExist(key string) bool {

@@ -3,7 +3,6 @@ package redis
 import (
 	"errors"
 	"github.com/garyburd/redigo/redis"
-	"strconv"
 	"vo"
 )
 
@@ -102,26 +101,6 @@ func (rc *RedisClient) Get(key string) (string, error) {
 	return reply, nil
 }
 
-func (rc *RedisClient) Setnx(key, value string) error {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	reply, err := redis.Int((c.Do("SETNX", key, value)))
-	if err != nil {
-		return err
-	}
-
-	// add redis key expire time.
-	// ignore if error of expire command.
-	rc.Expire(key, rc.expiresecond)
-
-	if reply == 1 {
-		return nil
-	} else {
-		return errors.New("redisclient: setnx fail of key exist")
-	}
-}
-
 func (rc *RedisClient) Expire(key string, expiresecond int) error {
 	c := rc.pool.Get()
 	defer c.Close()
@@ -153,74 +132,6 @@ func (rc *RedisClient) Del(key string) error {
 	//		return errors.New("redisclient: unexpected reply of del")
 	//	}
 	return nil
-}
-
-func (rc *RedisClient) ZRange(key string, start, stop int) ([]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	reply, err := redis.Strings(c.Do("ZRANGE", key, start, stop))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
-}
-
-func (rc *RedisClient) ZRangeWithScores(key string, start, stop int) (map[string]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	reply, err := redis.StringMap(c.Do("ZRANGE", key, start, stop, "WITHSCORES"))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
-}
-
-func (rc *RedisClient) ZRangeByScore(key string, min, max int, minopen, maxopen bool) ([]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	minstr := strconv.FormatInt(int64(min), 10)
-	maxstr := strconv.FormatInt(int64(max), 10)
-	if minopen {
-		minstr = "(" + strconv.FormatInt(int64(min), 10)
-	}
-
-	if maxopen {
-		maxstr = "(" + strconv.FormatInt(int64(max), 10)
-	}
-
-	reply, err := redis.Strings(c.Do("ZRANGEBYSCORE", key, minstr, maxstr))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
-}
-
-func (rc *RedisClient) ZRangeByScoreWithScores(key string, min, max int, minopen, maxopen bool) (map[string]string, error) {
-	c := rc.pool.Get()
-	defer c.Close()
-
-	minstr := strconv.FormatInt(int64(min), 10)
-	maxstr := strconv.FormatInt(int64(max), 10)
-	if minopen {
-		minstr = "(" + strconv.FormatInt(int64(min), 10)
-	}
-
-	if maxopen {
-		maxstr = "(" + strconv.FormatInt(int64(max), 10)
-	}
-
-	reply, err := redis.StringMap(c.Do("ZRANGEBYSCORE", key, minstr, maxstr, "WITHSCORES"))
-	if err != nil {
-		return nil, err
-	}
-
-	return reply, nil
 }
 
 func (rc *RedisClient) HGetall(key string) (map[string]string, error) {
@@ -308,6 +219,17 @@ func (rc *RedisClient) RPop(key string) (string, error) {
 	reply, err := redis.String(c.Do("LPop", key))
 	if err != nil {
 		return "", err
+	}
+	return reply, nil
+}
+
+func (rc *RedisClient) LRange(key string) ([]string, error) {
+	c := rc.pool.Get()
+	defer c.Close()
+
+	reply, err := redis.Strings(c.Do("LRANGE", key, 0, -1))
+	if err != nil {
+		return nil, err
 	}
 	return reply, nil
 }

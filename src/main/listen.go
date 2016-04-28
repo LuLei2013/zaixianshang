@@ -18,10 +18,13 @@ func main() {
 
 	fmt.Println("listen the world!")
 	GoRedisService.OpenRedis(vo.Ip, vo.Port)
+	//初始化商品数量
+	GoRedisService.HSetValue(vo.Product_Pre+vo.Product1_Query_Name, "0")
+
 	for {
 		//超过商品总数,停止监听
 		//todo 添加配置文件,尝试多商品
-		if count,err := strconv.Atoi(GoRedisService.HGetValue(vo.Product1_Query_Name)); count>= vo.Product1_Max_Num {
+		if count,err := strconv.Atoi(GoRedisService.HGetValue(vo.Product_Pre+vo.Product1_Query_Name)); count>= vo.Product1_Max_Num {
 			if err != nil {
 				panic(err)
 			}
@@ -41,7 +44,7 @@ func main() {
 				continue//解压失败则淘汰该用户,这里不抛出异常
 			}
 			if checkValid(userId) {
-				incCount(vo.Product1_Query_Name, userId) //写入redis
+				incCount(vo.Product_Pre+vo.Product1_Query_Name, userId) //写入redis
 			}
 			//fmt.Print(popValue + "\n")
 		}

@@ -14,5 +14,5 @@ query_name=333
 total_query_name=sum333
 
 [common]
-ip=192.168.2.165
+ip=localhost
 port=6379

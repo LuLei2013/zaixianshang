@@ -12,8 +12,14 @@ import (
 
 func ServiceSeckilling(req *http.Request) *vo.ReturnMsg {
 	message := &vo.ReturnMsg{0, ""} //返回消息
+	if !vo.Flag {
+		message.SetErrno(3)
+		message.SetErrMsg("秒杀失败")
+		return message
+	}
 	if value, err := redis.RedisPoolOne.Get(vo.Product1_Query_Name); err == nil {
 		if count, _ := strconv.Atoi(string(value)); count >= vo.Product1_Max_Num {
+			vo.Flag = false
 			message.SetErrno(3)
 			message.SetErrMsg("秒杀失败")
 		} else {

@@ -10,7 +10,6 @@ import (
 var RedisPoolOne *RedisClient
 
 func init() {
-	vo.Init()
 	RedisPoolOne = GetRedisInstance()
 	RedisPoolOne.Set(vo.Product1_Query_Name, "0")
 	RedisPoolOne.Set(vo.Product2_Query_Name, "0")

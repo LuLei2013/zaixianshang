@@ -15,5 +15,5 @@ total_query_name=sum333
 
 [common]
 query_prefix=poduct_
-ip=169.254.143.205
+ip=localhost
 port=6379

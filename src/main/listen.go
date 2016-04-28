@@ -31,7 +31,7 @@ func main() {
 			fmt.Println("listen finish!")
 			break
 		}
-		popValue := dao.RPopValue("list") //消费队列
+		popValue := dao.LPopValue("list") //消费队列
 		if popValue != "" {
 			fmt.Print("popValue:" + popValue)
 			var qe vo.QueueEntry

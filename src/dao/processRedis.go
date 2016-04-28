@@ -65,8 +65,8 @@ func LPushValue(key string, value string) {
 	}
 }
 
-func RPopValue(key string) string {
-	value, _ := redis.String(conn.Do("rpop", key))
+func LPopValue(key string) string {
+	value, _ := redis.String(conn.Do("lpop", key))
 	//if err != nil {
 	//	fmt.Println("RPopValue:", err)
 	//}
